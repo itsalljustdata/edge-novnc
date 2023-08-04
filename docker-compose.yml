@@ -1,0 +1,15 @@
+version: "3.4"
+services:
+  edge-novnc:
+    image: volansmelesmeles/edge-novnc
+    build: .
+    container_name: edge-novnc
+    volumes: 
+      - ./config:/config
+      - /etc/localtime:/etc/localtime:ro
+    ports: 
+      - 6080:6080/tcp
+    environment:
+      - TZ=Australia/Perth
+      - PUID=1000
+      - PGID=1000
