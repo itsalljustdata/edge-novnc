@@ -37,6 +37,8 @@ else
     echo "$0 : apt update"
     apt update
 
+    echo "$0 : apt search"
+    apt search microsoft-edge
     echo "$0 : apt install"
     apt install -y microsoft-edge-stable
 
