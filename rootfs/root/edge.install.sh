@@ -3,17 +3,16 @@
 
 
 echo "############################################################"
+echo "#"
 echo "# User   : `whoami`"
 echo "# Script : $0"
+echo "# Arch   : `dpkg --print-architecture`"
 echo "#"
 EDGE_EXE=`which microsoft-edge 2> /dev/null`
 
 if [ $? -eq 0 ]; then
     echo "# microsoft-edge already installed : ${EDGE_EXE}"
 else
-
-
-    thisArch=$(dpkg --print-architecture)
 
     echo "# Getting GPG file from MS and adding repo to sources.list #"
 
@@ -35,10 +34,13 @@ else
 
     echo "deb [signed-by=${gpgFile}] https://packages.microsoft.com/repos/edge stable main" | tee -a ${srcFileWrite}
 
+    echo "$0 : apt update"
     apt update
 
+    echo "$0 : apt install"
     apt install -y microsoft-edge-stable
 
+    echo "$0 : after apt install"
     EDGE_EXE=`which microsoft-edge`
 fi
 echo "############################################################"
