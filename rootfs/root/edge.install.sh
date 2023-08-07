@@ -30,9 +30,9 @@ else
     apt-cache policy  | grep origin | sed 's/^[[:space:]]*//' | cut -d" " -f 2 | sort -u
 
     echo "$0 : apt search"
-    apt search microsoft-edge-stable
-    apt search microsoft-edge-beta
-    apt search microsoft-edge-dev
+    apt search microsoft-edge
+    # apt search microsoft-edge-beta
+    # apt search microsoft-edge-dev
 
     echo "$0 : apt install"
     apt install -y microsoft-edge-stable
