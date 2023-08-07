@@ -19,6 +19,8 @@ else
 
     srcList='/etc/apt/sources.list'
 
+    find /etc/apt -type f -print
+
     if test -f "${srcList}"; then
         srcFileWrite=${srcList}
     else
