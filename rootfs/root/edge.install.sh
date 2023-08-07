@@ -33,11 +33,11 @@ else
 
     curl --silent --insecure https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o ${gpgFile}
 
-    echo "deb [arch=${thisArch} signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/edge stable main" | tee -a ${srcFileWrite}
+    echo "deb [signed-by=${gpgFile}] https://packages.microsoft.com/repos/edge stable main" | tee -a ${srcFileWrite}
 
-    apt update > /dev/null 2>&1
+    apt update
 
-    apt install -y microsoft-edge-stable > /dev/null 2>&1
+    apt install -y microsoft-edge-stable
 
     EDGE_EXE=`which microsoft-edge`
 fi
