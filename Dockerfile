@@ -3,14 +3,14 @@ FROM debian:bookworm-slim
 RUN \
  apt update > /dev/null 2>&1 && \
  apt upgrade -y > /dev/null 2>&1 && \
- apt install --no-install-recommends -y curl gpg software-properties-common apt-transport-https wget fonts-droid-fallback tightvncserver xfonts-base git websockify iproute2 net-tools procps && \
+ apt install --no-install-recommends -y curl gpg software-properties-common apt-transport-https wget fonts-droid-fallback tightvncserver xfonts-base git websockify iproute2 net-tools procps > /dev/null 2>&1 && \
  curl --insecure https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft.gpg
 
 RUN \
  echo "deb [arch=`dpkg --print-architecture` signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge.list && \
  apt update > /dev/null 2>&1 && \
  apt install --no-install-recommends -y microsoft-edge-beta > /dev/null 2>&1
- 
+
 RUN \
  git clone -qq https://github.com/novnc/noVNC.git /opt/novnc && \
  apt purge -y git > /dev/null 2>&1 && \
