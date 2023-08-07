@@ -8,19 +8,19 @@ RUN \
 	echo "deb [arch=`dpkg --print-architecture` signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge.list && \
 	apt update > /dev/null 2>&1 && \
 	apt install --no-install-recommends -y microsoft-edge-beta > /dev/null 2>&1 && \
-	git clone https://github.com/novnc/noVNC.git /opt/novnc && \
+	git clone -qq https://github.com/novnc/noVNC.git /opt/novnc && \
 	apt purge -y git > /dev/null 2>&1 && \
 	apt autoremove --purge -y > /dev/null 2>&1 && \
 	rm -rf /var/lib/apt/lists/*
 
 VOLUME /config
 
-ARG port_novnc=6080
-ARG port_vnc=5901
-ARG uname=abc
-ARG gname=abc
-ARG uid=1000
-ARG gid=1000
+ARG port_novnc=6080 \
+port_vnc=5901 \
+uname=abc \
+gname=abc \
+uid=1000 \
+gid=1000 
 
 # Configuration
 COPY edge-novnc.sh /usr/bin/edge-novnc.sh
