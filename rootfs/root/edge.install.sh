@@ -26,6 +26,9 @@ else
     echo "$0 : apt update"
     apt update
 
+    echo "$0 : sources"
+    apt-cache policy  | grep origin | sed 's/^[[:space:]]*//' | cut -d" " -f 2 | sort -u
+
     echo "$0 : apt search"
     apt search microsoft-edge-stable
     apt search microsoft-edge-beta
