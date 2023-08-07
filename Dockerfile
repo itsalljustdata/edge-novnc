@@ -47,6 +47,7 @@ ENV \
     PGID=$gid \
 	LANGUAGE=en_AU.UTF8 \
     PORT_NOVNC=$port_novnc \
-    PORT_VNC=$port_vnc
+    PORT_VNC=$port_vnc \
+    TZ=Etc/UTC
 
 CMD ["bash", "-c", "/entrypoint.sh"]
