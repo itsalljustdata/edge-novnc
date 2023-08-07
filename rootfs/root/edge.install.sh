@@ -5,12 +5,11 @@
 echo "############################################################"
 echo "# User   : `whoami`"
 echo "# Script : $0"
-echo "# Shell  : `ps -p $$`"
 echo "#"
 EDGE_EXE=`which microsoft-edge 2> /dev/null`
 
 if [ $? -eq 0 ]; then
-    echo "microsoft-edge already installed : ${EDGE_EXE}"
+    echo "# microsoft-edge already installed : ${EDGE_EXE}"
 else
 
 
@@ -20,14 +19,13 @@ else
 
     srcList='/etc/apt/sources.list'
 
-    if [ -e $srcList ]; then
+    if test -f "${srcList}"; then
         srcFileWrite=${srcList}
     else
         srcFileWrite="${srcList}.d/microsoft-edge.list"
     fi
 
-    echo ${srcFileWrite}
-    echo "############################################################"
+    echo "#  Writing data to ${srcFileWrite}"
 
     gpgFile='/usr/share/keyrings/microsoft.gpg'
 
@@ -41,6 +39,9 @@ else
 
     EDGE_EXE=`which microsoft-edge`
 fi
+echo "############################################################"
+
+set -e
 
 EDGE_VERSION=`microsoft-edge --version | cut -d" " -f 3`
 
@@ -53,6 +54,6 @@ function addIt () {
     grep "EDGE_EXE=" $fname || (echo "export EDGE_EXE=${EDGE_EXE}" | tee -a $fname)
 }
 
-addIt /etc/environment
+addIt /etc/environment > /dev/null
 
 echo "$0 : Finished"
