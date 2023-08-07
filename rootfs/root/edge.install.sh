@@ -16,29 +16,21 @@ else
 
     echo "# Getting GPG file from MS and adding repo to sources.list #"
 
-    srcList='/etc/apt/sources.list'
-
-    find /etc/apt -type f -print
-
-    if test -f "${srcList}"; then
-        srcFileWrite=${srcList}
-    else
-        srcFileWrite="${srcList}.d/microsoft-edge.list"
-    fi
-
-    echo "#  Writing data to ${srcFileWrite}"
-
     gpgFile='/usr/share/keyrings/microsoft.gpg'
-
     curl --silent --insecure https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o ${gpgFile}
-
+    
+    srcFileWrite="/etc/apt/sources.list.d/microsoft-edge.list"
+    echo "#  Writing data to ${srcFileWrite}"
     echo "deb [signed-by=${gpgFile}] https://packages.microsoft.com/repos/edge stable main" | tee -a ${srcFileWrite}
 
     echo "$0 : apt update"
     apt update
 
     echo "$0 : apt search"
-    apt search microsoft-edge
+    apt search microsoft-edge-stable
+    apt search microsoft-edge-beta
+    apt search microsoft-edge-dev
+
     echo "$0 : apt install"
     apt install -y microsoft-edge-stable
 
