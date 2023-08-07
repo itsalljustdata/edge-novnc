@@ -4,12 +4,22 @@ services:
     image: itsalljustdata/edge-novnc
     build: .
     container_name: edge-novnc
+    hostname: edge-novnc
     volumes: 
       - ./config:/config
       - /etc/localtime:/etc/localtime:ro
+      # - ./vnc.log:'/home/iajd/.vnc/edge-novnc:1.log'
     ports: 
       - 6080:6080/tcp
     environment:
-      - TZ=Australia/Perth
-      - PUID=1000
-      - PGID=1000
+      TZ: Australia/Perth
+      #
+      # Default Values
+      #
+      # VNC_PASSWD: password
+      # WIDTH: 1600
+      # HEIGHT: 900
+      # PUID: 1000
+      # PGID: 1000
+      # LANGUAGE: en_AU.UTF8
+      # TZ: Etc/UTC

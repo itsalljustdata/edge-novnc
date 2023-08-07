@@ -2,8 +2,8 @@
 
 set -e
 
-runUser=abc
-runGroup=abc
+runUser=${__RUN_USER:-iajd}
+runGroup=${__RUN_GROUP:-iajd}
 
 PUID=${PUID:-1000}
 PGID=${PGID:-1000}
@@ -55,4 +55,5 @@ if [ $chownNeeded -eq 1 ]; then
 fi
 
 echo "Spawning edge-novnc as user \"${runUser}\", group \"${runGroup}\""
+
 su --group ${runGroup} --command 'bash /usr/bin/edge-novnc.sh' ${runUser}

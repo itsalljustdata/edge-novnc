@@ -1,6 +1,12 @@
 #!/bin/bash
 
-set -e
+
+echo "######################################################"
+echo "# Launching noVNC"
+echo "# script : $0"
+echo "# user   : `whoami`"
+echo "# home   : `realpath ~`"
+echo "######################################################"
 
 export USER=`whoami`
 
@@ -24,19 +30,24 @@ vnc_config=${homeDir}/.vnc
 [ ! -e "${EDGE_CONFIG}/First Run" ] && mkdir -p "${EDGE_CONFIG}" && touch "${EDGE_CONFIG}/First Run"
 [ ! -e "$vnc_config" ] && mkdir -p $vnc_config
 
+
 vncpasswd=`realpath $vnc_config/passwd`
 echo $VNC_PASSWD | vncpasswd -f > $vncpasswd
 chmod 700 $vncpasswd
+
 
 startup=$vnc_config/xstartup
 
 cat << EOF > "${startup}"
 #!/bin/bash
 while [ 1 ]; do
-    /opt/microsoft/msedge-beta/microsoft-edge $msedge_params
+    ${EDGE_EXE} ${msedge_params}
 done
 EOF
 chmod 755 $vnc_config/xstartup
+chmod 755 $vnc_config
+chmod 644 $vnc_config/*.log 2> /dev/null
+chmod 644 $vnc_config/*.pid 2> /dev/null
 running=$(ps -ef | grep -i $vncpasswd | grep -v grep | wc -l)
 if [ $running -gt 0 ]; then
     echo "Kill existing vncserver"
@@ -44,5 +55,12 @@ if [ $running -gt 0 ]; then
 fi
 [ -e /tmp/.X11-unix ] && rm -rf /tmp/.X11-unix
 [ -e /tmp/.X1-lock ] && rm -rf /tmp/.X1-lock
+
+if ! [ -e ~/.Xauthority ]; then
+    touch ~/.Xauthority
+    # Generate the magic cookie with 128 bit hex encoding
+    xauth add ${HOST}:0 . $(xxd -l 16 -p /dev/urandom)
+fi
+
 vncserver -name ${name} -depth 24 -geometry $vnc_geometry :1
 /opt/novnc/utils/novnc_proxy --listen ${PORT_NOVNC} --vnc localhost:${PORT_VNC}
