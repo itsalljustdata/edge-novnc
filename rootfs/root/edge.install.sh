@@ -25,9 +25,14 @@ else
     install -o root -g root -m 644 ${gpgFile} /etc/apt/trusted.gpg.d/
     ls -al /etc/apt/trusted.gpg.d/
     
-    srcFileWrite="/etc/apt/sources.list"
+    srcFileWrite=/etc/apt/sources.list
     ls -al /etc/apt/
-    [ test -f $srcFileWrite ] || srcFileWrite+=".d/microsoft-edge.list"
+    if [ test -f "$srcFileWrite" ]; then
+        echo "$0 : ${srcFileWrite} exists"
+    else
+        echo "$0 : ${srcFileWrite} does not exist"
+        srcFileWrite+=".d/microsoft-edge.list"
+    fi
 
     echo "#  Writing data to ${srcFileWrite}"
     # echo "deb [arch=${thisArch}] https://packages.microsoft.com/repos/edge stable main" | tee -a ${srcFileWrite}
