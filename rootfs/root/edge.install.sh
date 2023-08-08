@@ -14,20 +14,17 @@ EDGE_EXE=`which microsoft-edge 2> /dev/null`
 if [ $? -eq 0 ]; then
     echo "# microsoft-edge already installed : ${EDGE_EXE}"
 else
-
     echo "# Getting GPG file from MS and adding repo to sources.list #"
 
     ascFile=microsoft.asc
     gpgFile=microsoft.gpg
     curl --silent --output ${ascFile} https://packages.microsoft.com/keys/microsoft.asc
     gpg --dearmor -o ${gpgFile} ${ascFile}
-    ls -al microsoft.*
     install -o root -g root -m 644 ${gpgFile} /etc/apt/trusted.gpg.d/
-    ls -al /etc/apt/trusted.gpg.d/
     
     srcFileWrite=/etc/apt/sources.list
     ls -al /etc/apt/
-    if [ test -f "$srcFileWrite" ]; then
+    if [ -e "$srcFileWrite" ]; then
         echo "$0 : ${srcFileWrite} exists"
     else
         echo "$0 : ${srcFileWrite} does not exist"
