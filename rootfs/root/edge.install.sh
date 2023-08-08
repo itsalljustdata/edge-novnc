@@ -1,12 +1,13 @@
 #/bin/bash
 
 
+thisArch=`dpkg --print-architecture`
 
 echo "############################################################"
 echo "#"
 echo "# User   : `whoami`"
 echo "# Script : $0"
-echo "# Arch   : `dpkg --print-architecture`"
+echo "# Arch   : ${thisArch}"
 echo "#"
 EDGE_EXE=`which microsoft-edge 2> /dev/null`
 
@@ -16,23 +17,20 @@ else
 
     echo "# Getting GPG file from MS and adding repo to sources.list #"
 
-    gpgFile='/usr/share/keyrings/microsoft.gpg'
-    curl --silent --insecure https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o ${gpgFile}
+    gpgFile="~/microsoft.gpg"
+    curl --silent --insecure https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > ${gpgFile}
+    install -o root -g root -m 644 ${gpgFile} /etc/apt/trusted.gpg.d/
+    rm ${gpgFile}
     
     srcFileWrite="/etc/apt/sources.list.d/microsoft-edge.list"
     echo "#  Writing data to ${srcFileWrite}"
-    echo "deb [signed-by=${gpgFile}] https://packages.microsoft.com/repos/edge stable main" | tee -a ${srcFileWrite}
+    echo "deb [arch=${thisArch}] https://packages.microsoft.com/repos/edge stable main" | tee -a ${srcFileWrite}
 
     echo "$0 : apt update"
     apt update
 
     echo "$0 : sources"
     apt-cache policy  | grep origin | sed 's/^[[:space:]]*//' | cut -d" " -f 2 | sort -u
-
-    echo "$0 : apt search"
-    apt search microsoft-edge
-    # apt search microsoft-edge-beta
-    # apt search microsoft-edge-dev
 
     echo "$0 : apt install"
     apt install -y microsoft-edge-stable
