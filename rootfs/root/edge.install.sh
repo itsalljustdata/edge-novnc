@@ -26,11 +26,17 @@ else
     echo "#  Writing data to ${srcFileWrite}"
     echo "deb [arch=${thisArch}] https://packages.microsoft.com/repos/edge stable main" | tee -a ${srcFileWrite}
 
+    [ -e /etc/apt/sources.list ] && (echo "/etc/apt/sources.list" && cat /etc/apt/sources.list)
+    find /etc/apt/sources.list.d -type f -print -exec cat {} \;
+
     echo "$0 : apt update"
     apt update
 
     echo "$0 : sources"
-    apt-cache policy  | grep origin | sed 's/^[[:space:]]*//' | cut -d" " -f 2 | sort -u
+    apt-cache policy  | grep http | sed 's/^[[:space:]]*//' | cut -d" " -f 2 | sort -u
+
+    echo "$0 : apt search"
+    apt search microsoft-edge
 
     echo "$0 : apt install"
     apt install -y microsoft-edge-stable
