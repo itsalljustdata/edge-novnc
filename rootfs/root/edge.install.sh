@@ -17,10 +17,9 @@ else
 
     echo "# Getting GPG file from MS and adding repo to sources.list #"
 
-    gpgFile="/tmp/microsoft.gpg"
+    gpgFile="/root/microsoft.gpg"
     curl --silent --insecure https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > ${gpgFile}
     install -o root -g root -m 644 ${gpgFile} /etc/apt/trusted.gpg.d/
-    rm ${gpgFile}
     
     srcFileWrite="/etc/apt/sources.list.d/microsoft-edge.list"
     echo "#  Writing data to ${srcFileWrite}"
