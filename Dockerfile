@@ -1,4 +1,4 @@
-ARG  DEBIAN_LABEL=bookworm-slim
+ARG  DEBIAN_LABEL=bullseye-slim
 FROM debian:${DEBIAN_LABEL}
 ARG DEBIAN_LABEL
 

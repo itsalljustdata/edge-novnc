@@ -17,28 +17,33 @@ else
 
     echo "# Getting GPG file from MS and adding repo to sources.list #"
 
-    gpgFile="/root/microsoft.gpg"
-    curl --silent --insecure https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > ${gpgFile}
+    gpgFile=microsoft.gpg
+    curl --silent --remote-name https://packages.microsoft.com/keys/microsoft.asc
+    gpg --dearmor -o ${gpgFile} microsoft.asc
+    ls -al microsoft.*
     install -o root -g root -m 644 ${gpgFile} /etc/apt/trusted.gpg.d/
+    ls -al /etc/apt/trusted.gpg.d/
     
     srcFileWrite="/etc/apt/sources.list.d/microsoft-edge.list"
     echo "#  Writing data to ${srcFileWrite}"
-    echo "deb [arch=${thisArch}] https://packages.microsoft.com/repos/edge stable main" | tee -a ${srcFileWrite}
+    # echo "deb [arch=${thisArch}] https://packages.microsoft.com/repos/edge stable main" | tee -a ${srcFileWrite}
+    echo "deb https://packages.microsoft.com/repos/edge stable main" | tee -a ${srcFileWrite}
+    rm microsoft.{asc,gpg}
 
     [ -e /etc/apt/sources.list ] && (echo "/etc/apt/sources.list" && cat /etc/apt/sources.list)
     find /etc/apt/sources.list.d -type f -print -exec cat {} \;
 
     echo "$0 : apt update"
-    apt update
+    apt-get update
 
     echo "$0 : sources"
-    apt-cache policy  | grep http | sed 's/^[[:space:]]*//' | cut -d" " -f 2 | sort -u
+    apt-cache policy  | grep origin | sed 's/^[[:space:]]*//' | cut -d" " -f 2 | sort -u
 
     echo "$0 : apt search"
     apt search microsoft-edge
 
     echo "$0 : apt install"
-    apt install -y microsoft-edge-stable
+    apt-get install -y microsoft-edge-stable
 
     echo "$0 : after apt install"
     EDGE_EXE=`which microsoft-edge`
