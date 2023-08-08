@@ -17,20 +17,23 @@ else
 
     echo "# Getting GPG file from MS and adding repo to sources.list #"
 
+    ascFile=microsoft.asc
     gpgFile=microsoft.gpg
-    curl --silent --remote-name https://packages.microsoft.com/keys/microsoft.asc
-    gpg --dearmor -o ${gpgFile} microsoft.asc
+    curl --silent --output ${ascFile} https://packages.microsoft.com/keys/microsoft.asc
+    gpg --dearmor -o ${gpgFile} ${ascFile}
     ls -al microsoft.*
     install -o root -g root -m 644 ${gpgFile} /etc/apt/trusted.gpg.d/
     ls -al /etc/apt/trusted.gpg.d/
     
-    srcFileWrite="/etc/apt/sources.list.d/microsoft-edge.list"
+    srcFileWrite="/etc/apt/sources.list"
+    [ test -f $srcFileWrite ] || srcFileWrite+=".d/microsoft-edge.list"
+
     echo "#  Writing data to ${srcFileWrite}"
     # echo "deb [arch=${thisArch}] https://packages.microsoft.com/repos/edge stable main" | tee -a ${srcFileWrite}
     echo "deb https://packages.microsoft.com/repos/edge stable main" | tee -a ${srcFileWrite}
-    rm microsoft.{asc,gpg}
+    rm ${ascFile} ${gpgFile}
 
-    [ -e /etc/apt/sources.list ] && (echo "/etc/apt/sources.list" && cat /etc/apt/sources.list)
+    [ -e /etc/apt/sources.list ] && (echo "/etc/apt/sources.list" && cat /etc/apt/sources.list && echo "####################################")
     find /etc/apt/sources.list.d -type f -print -exec cat {} \;
 
     echo "$0 : apt update"
