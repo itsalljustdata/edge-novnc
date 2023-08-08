@@ -26,6 +26,7 @@ else
     ls -al /etc/apt/trusted.gpg.d/
     
     srcFileWrite="/etc/apt/sources.list"
+    ls -al /etc/apt/
     [ test -f $srcFileWrite ] || srcFileWrite+=".d/microsoft-edge.list"
 
     echo "#  Writing data to ${srcFileWrite}"
