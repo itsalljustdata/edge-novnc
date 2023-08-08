@@ -1,4 +1,4 @@
-ARG  DEBIAN_LABEL=bullseye-slim
+ARG  DEBIAN_LABEL=bookworm-slim
 FROM debian:${DEBIAN_LABEL}
 ARG DEBIAN_LABEL
 
@@ -7,7 +7,7 @@ LABEL "org.debian.version"="${DEBIAN_LABEL}"
 RUN \
  apt update > /dev/null 2>&1 && \
  apt upgrade -y > /dev/null 2>&1 && \
- apt install --no-install-recommends -y curl gpg software-properties-common apt-transport-https wget fonts-droid-fallback tightvncserver xfonts-base git websockify iproute2 net-tools procps xxd > /dev/null 2>&1
+ apt install -y curl coreutils gpg software-properties-common python3-requests python3-bs4 apt-transport-https wget fonts-droid-fallback tightvncserver xfonts-base git websockify iproute2 net-tools procps xxd > /dev/null 2>&1
  
 COPY rootfs /
 
@@ -24,7 +24,7 @@ EXPOSE $port_novnc $port_vnc
 
 RUN \
  chmod 700 ~/*.sh && \
- bash -c ~/edge.install.sh | tee ~/edge.install.log && \
+ bash /root/edge.install.sh | tee ~/edge.install.log && \
  rm ~/edge.install.sh && \
  git clone -qq https://github.com/novnc/noVNC.git /opt/novnc && \
  apt purge -y git > /dev/null 2>&1 && \

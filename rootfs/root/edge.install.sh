@@ -1,6 +1,5 @@
 #/bin/bash
 
-
 thisArch=`dpkg --print-architecture`
 
 echo "############################################################"
@@ -9,54 +8,26 @@ echo "# User   : `whoami`"
 echo "# Script : $0"
 echo "# Arch   : ${thisArch}"
 echo "#"
-EDGE_EXE=`which microsoft-edge 2> /dev/null`
 
+
+EDGE_EXE=`which microsoft-edge 2> /dev/null`
 if [ $? -eq 0 ]; then
     echo "# microsoft-edge already installed : ${EDGE_EXE}"
+    set -e
 else
-    echo "# Getting GPG file from MS and adding repo to sources.list #"
-
-    ascFile=microsoft.asc
-    gpgFile=microsoft.gpg
-    curl --silent --output ${ascFile} https://packages.microsoft.com/keys/microsoft.asc
-    gpg --dearmor -o ${gpgFile} ${ascFile}
-    install -o root -g root -m 644 ${gpgFile} /etc/apt/trusted.gpg.d/
-    
-    srcFileWrite=/etc/apt/sources.list
-    ls -al /etc/apt/
-    if [ -e "$srcFileWrite" ]; then
-        echo "$0 : ${srcFileWrite} exists"
-    else
-        echo "$0 : ${srcFileWrite} does not exist"
-        srcFileWrite+=".d/microsoft-edge.list"
+    set -e
+    echo  ${thisArch} > arch.txt
+    python3 /root/getdeb.py
+    if [ $? -ne 0 ]; then
+        exit 1
     fi
-
-    echo "#  Writing data to ${srcFileWrite}"
-    echo "deb [arch=${thisArch}] https://packages.microsoft.com/repos/edge stable main" | tee -a ${srcFileWrite}
-    rm ${ascFile} ${gpgFile}
-
-    [ -e /etc/apt/sources.list ] && (echo "/etc/apt/sources.list" && cat /etc/apt/sources.list && echo "####################################")
-    find /etc/apt/sources.list.d -type f -print -exec cat {} \;
-
-    echo "$0 : apt update"
-    apt-get update
-
-    echo "$0 : sources"
-    apt-cache policy  | grep origin | sed 's/^[[:space:]]*//' | cut -d" " -f 2 | sort -u
-    apt-cache policy 
-
-    echo "$0 : apt search"
-    apt search microsoft-edge
-
-    echo "$0 : apt install"
-    apt-get install -y microsoft-edge-stable
-
-    echo "$0 : after apt install"
+    apt install -y /tmp/msedge.deb > /dev/null 2>&1
+    rm /tmp/msedge.deb
+    
     EDGE_EXE=`which microsoft-edge`
 fi
 echo "############################################################"
 
-set -e
 
 EDGE_VERSION=`microsoft-edge --version | cut -d" " -f 3`
 
