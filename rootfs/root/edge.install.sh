@@ -32,8 +32,7 @@ else
     fi
 
     echo "#  Writing data to ${srcFileWrite}"
-    # echo "deb [arch=${thisArch}] https://packages.microsoft.com/repos/edge stable main" | tee -a ${srcFileWrite}
-    echo "deb https://packages.microsoft.com/repos/edge stable main" | tee -a ${srcFileWrite}
+    echo "deb [arch=${thisArch}] https://packages.microsoft.com/repos/edge stable main" | tee -a ${srcFileWrite}
     rm ${ascFile} ${gpgFile}
 
     [ -e /etc/apt/sources.list ] && (echo "/etc/apt/sources.list" && cat /etc/apt/sources.list && echo "####################################")
@@ -44,6 +43,7 @@ else
 
     echo "$0 : sources"
     apt-cache policy  | grep origin | sed 's/^[[:space:]]*//' | cut -d" " -f 2 | sort -u
+    apt-cache policy 
 
     echo "$0 : apt search"
     apt search microsoft-edge
