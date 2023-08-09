@@ -18,6 +18,7 @@ env:
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
+  TEST_TAG: ghcr.io/${{ github.repository }}:test
 
 jobs:
   push_to_registry:
@@ -34,8 +35,6 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3.5.2
-        with:
-          fetch-depth: 1
 
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
@@ -61,7 +60,28 @@ jobs:
         uses: docker/metadata-action@v4.4.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: type=sha,format=long
+          tags: |
+            type=schedule
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha
+
+      - name: Build for test
+        id: build-for-test
+        uses: docker/build-push-action@v4
+        with:
+            load: true
+            tags: ${{ env.TEST_TAG }}
+            labels: ${{ steps.meta.outputs.labels }}
+            cache-from: type=gha
+            cache-to: type=gha,mode=max
+
+      - name: Test Image
+        run: |
+           docker run --rm ${{ env.TEST_TAG }}
 
       - name: Build and Push
         id: build-and-push
@@ -80,8 +100,5 @@ jobs:
             TAGS: ${{ steps.meta.outputs.tags }}
             DIGEST: ${{ steps.build-and-push.outputs.digest }}
         run: |
-           IFS=$'\n' read -rd '' -a tagArr <<<"$TAGS"
-           for i in "${tagArr[@]}"; do
-              echo "$i"
-              cosign sign -y ${i}@${DIGEST}
-           done
+           echo "$TAGS"
+           cosign sign -y ${TAGS}@${DIGEST}
