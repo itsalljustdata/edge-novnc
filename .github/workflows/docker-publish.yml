@@ -40,7 +40,6 @@ jobs:
       - name: Install cosign
         if: github.event_name != 'pull_request'
         uses: sigstore/cosign-installer@6e04d228eb30da1757ee4e1dd75a0ec73a653e06 #v3.1.1
-
       - name: Check cosign Install
         run: cosign version
         # with:
@@ -74,20 +73,34 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Shake and Bake
-        id: shake-and-bake
+        id: build-and-push
         uses: docker/build-push-action@v4
         with:
-          context: .
-        #   platforms: linux/amd64
+          platforms: linux/amd64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-
+      #   outputs: type=image,name=target,annotation-index.org.opencontainers.image.description=${{ github.ref }}
+      # Sign the resulting Docker image digest except on PRs.
+      # This will only write to the public Rekor transparency log when the Docker
+      # repository is public to avoid leaking data.  If you would like to publish
+      # transparency data even for private images, pass --force to cosign below.
+      # https://github.com/sigstore/cosign
+      - name: Sign image with a key
+        if: ${{ github.event_name != 'pull_request' }}
+        run: |
+          cosign sign --yes --key env://COSIGN_PRIVATE_KEY "${TAGS}@${DIGEST}"
+        env:
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          TAGS: ${{ steps.meta.outputs.tags }}
+          DIGEST: ${{ steps.build-and-push.outputs.digest }}
+          
       - name: Sign the images with GitHub OIDC Token
         env:
             TAGS: ${{ steps.meta.outputs.tags }}
-            DIGEST: ${{ steps.shake-and-bake.outputs.digest }}
-        run: cosign sign --yes "${TAGS}@${DIGEST}"
+            DIGEST: ${{ steps.build-and-push.outputs.digest }}
+        run: cosign sign --yes ${{ steps.meta.outputs.tags }}@${{ steps.build-and-push.outputs.digest }}
