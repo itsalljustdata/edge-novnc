@@ -2,12 +2,12 @@ version: "3.4"
 services:
   edge-novnc:
     image: itsalljustdata/edge-novnc
-    build: .
     container_name: edge-novnc
     hostname: edge-novnc
     volumes: 
       - ./config:/config
       - /etc/localtime:/etc/localtime:ro
+      # Make sure you 'touch ./vnc.log' first, otherwise docker will create a folder!
       # - ./vnc.log:'/home/iajd/.vnc/edge-novnc:1.log'
     ports: 
       - 6080:6080/tcp
