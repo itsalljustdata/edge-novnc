@@ -16,7 +16,7 @@ on:
 env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
-  REGISTRY_DOCKER: index.docker.io
+  REGISTRY_DOCKER: docker.io
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
   TEST_TAG: ghcr.io/${{ github.repository }}:test
@@ -52,6 +52,7 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
         with:
+          registry: ${{ env.REGISTRY_DOCKER }}
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           
@@ -98,6 +99,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          outputs: type=image,name=target,annotation-index.org.opencontainers.image.description=${{ github.ref }}
 
           
       - name: Sign the images with GitHub OIDC Token
