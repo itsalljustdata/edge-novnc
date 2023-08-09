@@ -17,8 +17,9 @@ Runs ms-edge in a NoVNC docker container (debian/bookworm-slim based)
 | `PORT_VNC` | Internal VNC Port | `5901` |
 | `TZ` | Container TZ | `Etc/UTC` |
 
-### Docker Run
+### Launching Container
 
+#### docker run
 ```
 docker run -d \
  --restart=unless-stopped \
@@ -27,3 +28,7 @@ docker run -d \
  -v /data/edge-novnc:/config \
  itsalljustdata/edge-novnc
 ```
+
+
+#### docker compose
+See [docker-compose.yml](blob/main/docker-compose.yml)
