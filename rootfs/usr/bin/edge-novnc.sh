@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 echo "######################################################"
 echo "# Launching noVNC"
 echo "# script : $0"
@@ -30,11 +29,9 @@ vnc_config=${homeDir}/.vnc
 [ ! -e "${EDGE_CONFIG}/First Run" ] && mkdir -p "${EDGE_CONFIG}" && touch "${EDGE_CONFIG}/First Run"
 [ ! -e "$vnc_config" ] && mkdir -p $vnc_config
 
-
 vncpasswd=`realpath $vnc_config/passwd`
 echo $VNC_PASSWD | vncpasswd -f > $vncpasswd
 chmod 700 $vncpasswd
-
 
 startup=$vnc_config/xstartup
 
@@ -44,15 +41,18 @@ while [ 1 ]; do
     ${EDGE_EXE} ${msedge_params}
 done
 EOF
+
 chmod 755 $vnc_config/xstartup
 chmod 755 $vnc_config
 chmod 644 $vnc_config/*.log 2> /dev/null
 chmod 644 $vnc_config/*.pid 2> /dev/null
+
 running=$(ps -ef | grep -i $vncpasswd | grep -v grep | wc -l)
 if [ $running -gt 0 ]; then
     echo "Kill existing vncserver"
     vncserver -kill :1 1>/dev/null 2>&1
 fi
+
 [ -e /tmp/.X11-unix ] && rm -rf /tmp/.X11-unix
 [ -e /tmp/.X1-lock ] && rm -rf /tmp/.X1-lock
 
