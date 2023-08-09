@@ -20,5 +20,10 @@ Runs ms-edge in a NoVNC docker container (debian/bookworm-slim based)
 ### Docker Run
 
 ```
-docker run -d --restart=unless-stopped --name=edge-novnc -p 26080:6080 -v /data/edge-novnc:/config  itsalljustdata/edge-novnc
+docker run -d \
+ --restart=unless-stopped \
+ --name=edge-novnc \
+ -p 26080:6080 \
+ -v /data/edge-novnc:/config \
+ itsalljustdata/edge-novnc
 ```
