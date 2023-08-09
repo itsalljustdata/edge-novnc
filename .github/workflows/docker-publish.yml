@@ -81,7 +81,11 @@ jobs:
 
       - name: Test Image
         run: |
-           docker run --rm ${{ env.TEST_TAG }}
+           containerName=${{ github.repository_owner }}
+           docker run --name ${containerName} -d ${{ env.TEST_TAG }}
+           sleep 5
+           docker logs -t ${containerName}
+           docker rm -f ${containerName}
 
       - name: Build and Push
         id: build-and-push

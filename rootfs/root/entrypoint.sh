@@ -11,8 +11,6 @@ PGID=${PGID:-1000}
 uid=`id -u ${runUser}`
 gid=`id -g ${runGroup}`
 
-chownNeeded=0
-
 # Set GroupId
 if [ ${gid} -ne ${PGID} ]; then
     tmp=`grep ":${PGID}:" /etc/group | cut -d: -f 1`
@@ -22,7 +20,6 @@ if [ ${gid} -ne ${PGID} ]; then
     else
         runGroup=$tmp
         echo "GID ${PGID} already exists: running as group \"${runGroup}\""
-        chownNeeded=1
         usermod -aG $PGID ${runUser}
     fi
 fi
@@ -43,16 +40,13 @@ if [ ${uid} -ne ${PUID} ]; then
             exit 1
         fi
         
-        chownNeeded=1
         passwdEntry=`grep "^${runUser}:" /etc/passwd`
         mkdir -p `echo $passwdEntry | cut -d: -f 6` 2> /dev/null
         usermod -aG $PGID ${runUser}
     fi
 fi
 
-if [ $chownNeeded -eq 1 ]; then
-    chown -R ${runUser}:${runGroup} /config
-fi
+chown -R ${runUser}:${runGroup} /config
 
 echo "Spawning edge-novnc as user \"${runUser}\", group \"${runGroup}\""
 
