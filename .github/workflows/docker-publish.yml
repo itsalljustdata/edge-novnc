@@ -72,7 +72,7 @@ jobs:
             ${{ env.IMAGE_NAME }}
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Shake and Bake
+      - name: Build and Push
         id: build-and-push
         uses: docker/build-push-action@v4
         with:
@@ -89,18 +89,18 @@ jobs:
       # repository is public to avoid leaking data.  If you would like to publish
       # transparency data even for private images, pass --force to cosign below.
       # https://github.com/sigstore/cosign
-      - name: Sign image with a key
-        if: ${{ github.event_name != 'pull_request' }}
-        run: |
-          cosign sign --yes --key env://COSIGN_PRIVATE_KEY "${TAGS}@${DIGEST}"
-        env:
-          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-          TAGS: ${{ steps.meta.outputs.tags }}
-          DIGEST: ${{ steps.build-and-push.outputs.digest }}
+    #   - name: Sign image with a key
+    #     if: ${{ github.event_name != 'pull_request' }}
+    #     run: |
+    #       cosign sign --yes --key env://COSIGN_PRIVATE_KEY ${{ steps.meta.outputs.tags }}@${{ steps.build-and-push.outputs.digest }}
+    #     env:
+    #       COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+    #       COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+    #     #   TAGS: ${{ steps.meta.outputs.tags }}
+    #     #   DIGEST: ${{ steps.build-and-push.outputs.digest }}
           
       - name: Sign the images with GitHub OIDC Token
-        env:
-            TAGS: ${{ steps.meta.outputs.tags }}
-            DIGEST: ${{ steps.build-and-push.outputs.digest }}
+        # env:
+        #     TAGS: ${{ steps.meta.outputs.tags }}
+        #     DIGEST: ${{ steps.build-and-push.outputs.digest }}
         run: cosign sign --yes ${{ steps.meta.outputs.tags }}@${{ steps.build-and-push.outputs.digest }}
