@@ -1,7 +1,7 @@
 version: "3.4"
 services:
   edge-novnc:
-    image: itsalljustdata/edge-novnc
+    image: ghcr.io/itsalljustdata/edge-novnc
     container_name: edge-novnc
     hostname: edge-novnc
     volumes: 
