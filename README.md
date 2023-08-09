@@ -31,4 +31,4 @@ docker run -d \
 
 
 #### docker compose
-See [docker-compose.yml](blob/main/docker-compose.yml)
+See [docker-compose.yml](docker-compose.yml)
