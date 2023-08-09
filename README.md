@@ -12,7 +12,7 @@ Runs ms-edge in a NoVNC docker container (debian/bookworm-slim based)
 | `HEIGHT` | Window Height | `900` |
 | `PUID` | User Id to run as inside container | `1000` |
 | `PGID` | Group Id to run as inside container | `1000` |
-| `LANGUAGE` | Langunge | `en_AU.UTF8` |
+| `LANGUAGE` | Language | `en_AU.UTF8` |
 | `PORT_NOVNC` | Internal NoVNC Port | `6080` |
 | `PORT_VNC` | Internal VNC Port | `5901` |
 | `TZ` | Container TZ | `Etc/UTC` |
