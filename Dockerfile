@@ -2,7 +2,9 @@ ARG  DEBIAN_LABEL=bookworm-slim
 FROM debian:${DEBIAN_LABEL}
 ARG DEBIAN_LABEL
 
-LABEL "org.debian.version"="${DEBIAN_LABEL}"
+LABEL org.opencontainers.image.description "NoVNC container for ms-edge"
+LABEL org.opencontainers.image.base.name debian:${DEBIAN_LABEL}
+
 
 RUN \
  apt update > /dev/null 2>&1 && \
