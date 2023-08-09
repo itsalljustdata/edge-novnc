@@ -32,3 +32,10 @@ docker run -d \
 
 #### docker compose
 See [docker-compose.yml](docker-compose.yml)
+
+If you want to make your vnc log file available to the docker host, map a volume - but make sure you 'touch ./vnc.log' first, otherwise docker will create a folder!
+
+    `# - ./vnc.log:'/home/iajd/.vnc/edge-novnc:1.log'`
+    
+The filename in the container is determined by the `HOSTNAME` of the container, so you'll need to set that to something known if you wish to access the logs.
+   
